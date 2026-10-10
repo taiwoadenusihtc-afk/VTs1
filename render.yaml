@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: vatictrader
+    runtime: node
+    plan: starter
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vatictrader-db
+          property: connectionString
+      - key: PGSSLMODE
+        value: require
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      # Public URL of this service (no trailing slash). Used for Stripe return URLs.
+      - key: APP_BASE_URL
+        sync: false
+      # Stripe: subscription fees only. Test-mode price IDs below; swap for live
+      # price IDs when you go live. Secrets are entered in the Render dashboard.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_ID_STARTER
+        value: price_1UOcdHFqWk14rBGjArCGpNxw
+      - key: STRIPE_PRICE_ID_PRO
+        value: price_1UOcdJFqWk14rBGjy8UQz9YE
+      # AI features (strategy generation, logic checks, Portfolio Agent)
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: FINNHUB_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: vatictrader-db
+    plan: basic-1gb
+    databaseName: vatictrader
+    user: vatictrader
